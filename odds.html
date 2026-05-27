@@ -10,6 +10,10 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+.odds-page-wrap { max-width: 1100px; margin: 0 auto; padding: 0 16px; }
+@media (max-width: 767px) { .odds-page-wrap { padding: 0 10px; } }
+</style>
 </head>
 <body>
 
@@ -33,6 +37,7 @@
     <a href="faq.html">Q&A</a>
 </nav>
 <div id="countdown-bar"><div id="countdown-bar-inner"></div></div>
+<div class="odds-page-wrap">
 
 <div class="section-title">出場チーム一覧</div>
 <table class="team-table" id="teamHeader"></table>
@@ -151,5 +156,6 @@
 <script src="js/common.js"></script>
 <script>document.addEventListener("DOMContentLoaded", renderCountdown);</script>
 <script src="js/odds.js"></script>
+</div>
 </body>
 </html>

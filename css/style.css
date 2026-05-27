@@ -218,7 +218,7 @@ table.list-table { width: 100%; border-collapse: collapse; }
 .btn-delete:hover { background: #ffd0d0; }
 
 /* ── テンキー ── */
-#numpad-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 2000; display: flex; align-items: center; justify-content: center; }
+#numpad-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 2000; display: flex; align-items: center; }
 #numpad-box { background: #fff; border-radius: 10px; padding: 18px; width: 220px; box-shadow: 0 6px 30px rgba(0,0,0,.35); }
 #numpad-preview { font-size: 1.4em; font-weight: bold; text-align: right; color: var(--jra-blue); margin-bottom: 10px; border-bottom: 2px solid var(--jra-blue); padding-bottom: 6px; }
 .np-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 6px; }
@@ -253,7 +253,7 @@ table.odds-list tr.odds_row td[data-clickable]:hover { background: #ffe082 !impo
     .page-nav { padding: 6px 8px; gap: 4px; flex-wrap: nowrap; margin-bottom: 0; }
     .page-nav a { padding: 6px 10px; font-size: .78em; border-width: 1.5px; }
 
-    #countdown-bar { padding: 6px 12px; font-size: .75rem; justify-content: center; }
+    #countdown-bar { padding: 6px 12px; font-size: .75rem; }
 
     .marksheet-area { padding: 6px; }
     .ms-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
