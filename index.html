@@ -45,7 +45,7 @@
         .page-nav { background: var(--navy-mid); border-bottom: 1px solid rgba(255,255,255,.08); position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 6px rgba(0,0,0,.15); }
 
         /* カウントダウン */        .cd-urgent
-        .page-inner { max-width: 1100px; margin: 0 auto; padding: 0 16px 40px; }
+        .page-inner { max-width: 1100px; margin: 0 auto; padding: 0 24px 40px; }
         .pc-view { display: block; }
         .sp-view { display: none; }
 
@@ -91,8 +91,8 @@
         .mark-img { width: var(--mark-size); height: var(--mark-size); object-fit: contain; display: block; }
 
         /* メンバーポップアップ */
-        #member-popup { position: fixed; background: #fff; border: 2px solid var(--blue); border-radius: 8px; padding: 14px 18px; box-shadow: 0 4px 20px rgba(0,0,0,.2); z-index: 3000; min-width: 200px; max-width: 280px; }
-        #member-popup h4 { margin: 0 0 10px; font-size: 1em; color: var(--blue); border-bottom: 1px solid #ccc; padding-bottom: 6px; }
+        #member-popup { position: fixed; background: #fff; border: 2px solid var(--blue); border-radius: 8px; padding: 14px 18px; box-shadow: 0 4px 20px rgba(0,0,0,.2); z-index: 3000; min-width: 200px; max-width: 280px; user-select: none; }
+        #member-popup h4 { margin: 0 0 10px; font-size: 1em; color: var(--blue); border-bottom: 1px solid #ccc; padding-bottom: 6px; cursor: grab; }
         .popup-links { display: flex; flex-direction: column; gap: 6px; }
         .popup-links a { display: flex; align-items: center; gap: 6px; color: var(--blue); text-decoration: none; font-size: .9em; padding: 4px 8px; border-radius: 4px; border: 1px solid #ccc; }
         .popup-links a:hover { background: var(--blue-light); }
@@ -167,7 +167,6 @@
     <a href="faq.html">Q&A</a>
 </nav>
 <div id="countdown-bar"><div id="countdown-bar-inner"></div></div>
-</div>
 
 <!-- PC表示 -->
 <div class="pc-view">
@@ -375,16 +374,53 @@ function openMemberPopup(member, anchor) {
         if (member.bilibili) { const a = document.createElement('a'); a.href = member.bilibili; a.target = '_blank'; a.innerHTML = '<span>▶</span> Bilibili';    links.appendChild(a); }
     }
     popup.style.display = 'block';
+    popup.style.transform = '';
     if (window.innerWidth > 767) {
-        const rect = anchor.getBoundingClientRect();
-        const pw = popup.offsetWidth;
-        let left = rect.left + window.scrollX;
-        if (left + pw > window.innerWidth - 10) left = window.innerWidth - pw - 10;
-        if (left < 10) left = 10;
-        popup.style.left = left + 'px';
-        popup.style.top = (rect.bottom + window.scrollY + 6) + 'px';
-        popup.style.transform = '';
+        // 画面右上寄りに表示
+        const pw = popup.offsetWidth || 240;
+        const left = Math.min(window.innerWidth - pw - 20, window.innerWidth - pw - 20);
+        popup.style.left = Math.max(10, window.innerWidth - pw - 20) + 'px';
+        popup.style.top = '80px';
     }
+    initDrag(popup);
+}
+
+function initDrag(popup) {
+    const handle = popup.querySelector('h4');
+    let startX, startY, startLeft, startTop, dragging = false;
+    handle.onmousedown = function(e) {
+        dragging = true;
+        startX = e.clientX; startY = e.clientY;
+        startLeft = parseInt(popup.style.left) || popup.getBoundingClientRect().left;
+        startTop  = parseInt(popup.style.top)  || popup.getBoundingClientRect().top;
+        handle.style.cursor = 'grabbing';
+        e.preventDefault();
+    };
+    document.onmousemove = function(e) {
+        if (!dragging) return;
+        const dx = e.clientX - startX, dy = e.clientY - startY;
+        popup.style.left = Math.max(0, startLeft + dx) + 'px';
+        popup.style.top  = Math.max(0, startTop  + dy) + 'px';
+    };
+    document.onmouseup = function() {
+        if (dragging) { dragging = false; handle.style.cursor = 'grab'; }
+    };
+    // タッチ対応
+    handle.ontouchstart = function(e) {
+        const t = e.touches[0];
+        dragging = true;
+        startX = t.clientX; startY = t.clientY;
+        startLeft = parseInt(popup.style.left) || popup.getBoundingClientRect().left;
+        startTop  = parseInt(popup.style.top)  || popup.getBoundingClientRect().top;
+    };
+    document.ontouchmove = function(e) {
+        if (!dragging) return;
+        const t = e.touches[0];
+        popup.style.left = Math.max(0, startLeft + t.clientX - startX) + 'px';
+        popup.style.top  = Math.max(0, startTop  + t.clientY - startY) + 'px';
+        e.preventDefault();
+    };
+    document.ontouchend = function() { dragging = false; };
 }
 function closePopup() { document.getElementById('member-popup').style.display = 'none'; }
 document.addEventListener('click', e => {
