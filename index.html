@@ -44,8 +44,7 @@
         /* ナビ */
         .page-nav { background: var(--navy-mid); border-bottom: 1px solid rgba(255,255,255,.08); position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 6px rgba(0,0,0,.15); }
 
-        /* カウントダウン */        .cd-urgent
-        .page-inner { max-width: 1100px; margin: 0 auto; padding: 0 24px 40px; }
+        .page-inner { max-width: 1100px; margin: 0 auto; padding: 0 24px 40px !important; box-sizing: border-box; }
         .pc-view { display: block; }
         .sp-view { display: none; }
 
@@ -376,11 +375,18 @@ function openMemberPopup(member, anchor) {
     popup.style.display = 'block';
     popup.style.transform = '';
     if (window.innerWidth > 767) {
-        // 画面右上寄りに表示
+        const rect = anchor.getBoundingClientRect();
         const pw = popup.offsetWidth || 240;
-        const left = Math.min(window.innerWidth - pw - 20, window.innerWidth - pw - 20);
-        popup.style.left = Math.max(10, window.innerWidth - pw - 20) + 'px';
-        popup.style.top = '80px';
+        const ph = popup.offsetHeight || 120;
+        let left = rect.left + window.scrollX;
+        let top  = rect.top  + window.scrollY - ph - 8;
+        // 上に出す。上がはみ出すなら下に出す
+        if (top < window.scrollY + 10) top = rect.bottom + window.scrollY + 8;
+        // 右がはみ出すなら左にずらす
+        if (left + pw > window.innerWidth - 10) left = window.innerWidth - pw - 10;
+        if (left < 10) left = 10;
+        popup.style.left = left + 'px';
+        popup.style.top  = top  + 'px';
     }
     initDrag(popup);
 }
