@@ -28,6 +28,8 @@ window.addEventListener('DOMContentLoaded', async () => {
         renderTeamHeader();
         initMsHeader();
         renderCart();
+        // SP初期化（データロード完了後）
+        initSPAfterLoad();
         // 前回のタブを復元
         // URLパラメータからフォーメーションを復元（印ページからの遷移）
         const urlParams = new URLSearchParams(window.location.search);
@@ -966,15 +968,20 @@ function spRender() {
         if (spSortMode === 'pop') list.sort((a,b) => parseFloat(a.win)-parseFloat(b.win));
         container.innerHTML = list.map(item => {
             const fc = FRAME_COLORS[item.no] || {bg:'#999',fg:'#fff'};
-            return `<div class="sp-odds-item" onclick="spAddWinPlace(${item.no})">
+            return `<div class="sp-odds-item" style="cursor:default;">
                 <div class="sp-odds-frame" style="background:${fc.bg};color:${fc.fg}">${item.no}</div>
                 <div class="sp-odds-item-body">
                     <div class="sp-odds-team">${item.name}</div>
-                    <div class="sp-odds-comb">複勝: <span class="sp-odds-val" style="font-size:.85rem;color:#333">${item.place||'---'}</span></div>
                 </div>
-                <div class="sp-odds-val-wrap">
-                    <div class="sp-odds-val ${getOddsClass(item.win,'win')}">${item.win||'---'}</div>
-                    <div style="font-size:.65rem;color:#aaa">単勝</div>
+                <div style="display:flex;gap:6px;padding:0 8px;align-items:center;">
+                    <div style="text-align:center;cursor:pointer;padding:6px 10px;border:1.5px solid #ddd;border-radius:6px;background:#fff;" onclick="spAddBet('win','${item.no}','単勝')">
+                        <div class="sp-odds-val ${getOddsClass(item.win,'win')}">${item.win||'---'}</div>
+                        <div style="font-size:.62rem;color:#aaa;">単勝</div>
+                    </div>
+                    <div style="text-align:center;cursor:pointer;padding:6px 10px;border:1.5px solid #ddd;border-radius:6px;background:#fff;" onclick="spAddBet('place','${item.no}','複勝')">
+                        <div class="sp-odds-val" style="font-size:.82rem;color:#333;">${item.place||'---'}</div>
+                        <div style="font-size:.62rem;color:#aaa;">複勝</div>
+                    </div>
                 </div>
             </div>`;
         }).join('');
@@ -1031,14 +1038,13 @@ async function spSetMs() {
 
 // ── 買い目追加 ──
 function spAddWinPlace(no) {
-    // 単勝タップ → 単勝を追加、もう一度タップ → 複勝追加の代わりにトグル表示
-    // シンプルに単勝のみ追加（複勝は別途対応）
-    const t = teams[no-1];
-    const name = t ? t.tag : String(no);
-    cart.push({ id: genId(), displayType:'単勝', type:'win', formation: String(no), combs:[String(no)], amountPerBet:100 });
+    spAddBet('win', String(no), '単勝');
+}
+
+function spAddBet(type, formation, label) {
+    cart.push({ id: genId(), displayType: label, type, formation, combs: [formation], amountPerBet: 100 });
     saveCart();
     spRenderCart();
-    spFlashItem(no);
 }
 
 function spAddComb(key) {
@@ -1123,10 +1129,8 @@ function spOpenNumpad(id) {
     }
 }
 
-// ── DOMContentLoaded後に初期化 ──
-document.addEventListener('DOMContentLoaded', () => {
-    // teamsが揃ってから初期化（既存のDOMContentLoadedの後に実行）
-    setTimeout(() => {
-        if (isSP() && teams.length) initSP();
-    }, 100);
-});
+// ── SP初期化はodds.jsのDOMContentLoaded完了後に呼ばれる ──
+// initSPAfterLoad()をPC側のloadAllData完了後に呼ぶ
+function initSPAfterLoad() {
+    if (isSP()) initSP();
+}

@@ -14,6 +14,15 @@
     --bg: #f5f7fb;
     --white: #fff;
     --accent-red: #d00;
+    /* 枠番カラー */
+    --frame-1: #f0f0f0; --frame-1-text: #111;
+    --frame-2: #111;    --frame-2-text: #fff;
+    --frame-3: #cc2200; --frame-3-text: #fff;
+    --frame-4: #1a4fd6; --frame-4-text: #fff;
+    --frame-5: #d4a000; --frame-5-text: #111;
+    --frame-6: #1a7a3a; --frame-6-text: #fff;
+    --frame-7: #d06000; --frame-7-text: #fff;
+    --frame-8: #c0357a; --frame-8-text: #fff;
 }
 
 * { box-sizing: border-box; }

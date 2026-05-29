@@ -8,20 +8,7 @@
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
     <link rel="stylesheet" href="css/style.css">
     <style>
-        :root {
-            --frame-1:#f0f0f0; --frame-1-text:#111;
-            --frame-2:#111;    --frame-2-text:#fff;
-            --frame-3:#cc2200; --frame-3-text:#fff;
-            --frame-4:#1a4fd6; --frame-4-text:#fff;
-            --frame-5:#d4a000; --frame-5-text:#111;
-            --frame-6:#1a7a3a; --frame-6-text:#fff;
-            --frame-7:#d06000; --frame-7-text:#fff;
-            --frame-8:#c0357a; --frame-8-text:#fff;
-            --col-width: 110px;
-            --label-width: 68px;
-        }
-
-        .page-inner { max-width: 1100px; margin: 0 auto; padding: 0 16px 40px; }
+.page-inner { max-width: 1100px; margin: 0 auto; padding: 0 16px 40px; }
 
         /* ── PC: 横スクロールテーブル ── */
         .marks-outer { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 12px 0 20px; display: flex; justify-content: flex-start; }
@@ -425,8 +412,27 @@ function onMarkChange(teamId, val) {
         });
     }
     selectedMarks[String(teamId)] = val;
+    // PC版セレクト更新
     const sel = document.getElementById(`mark-${teamId}`);
     if (sel) { sel.value = val; updateSelectStyle(sel, val); }
+    // SP版セレクト更新
+    const spSel = document.getElementById(`sp-sel-${teamId}`);
+    if (spSel) {
+        spSel.value = val;
+        spSel.className = 'sp-mark-select' + (val ? ' sel-' + val : '');
+    }
+    // 排他制御: 他のSP版セレクトも更新
+    if (val && ['honmei','taikou','tanana','renka'].includes(val)) {
+        Object.keys(selectedMarks).forEach(id => {
+            if (String(id) !== String(teamId)) {
+                const otherSpSel = document.getElementById(`sp-sel-${id}`);
+                if (otherSpSel && otherSpSel.value === val) {
+                    otherSpSel.value = '';
+                    otherSpSel.className = 'sp-mark-select';
+                }
+            }
+        });
+    }
     saveMarks();
     updateFormationPreview();
     drawCanvas();
