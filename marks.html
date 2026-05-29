@@ -8,10 +8,14 @@
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
     <link rel="stylesheet" href="css/style.css">
     <style>
+        :root {
+            --col-width: 110px;
+            --label-width: 68px;
+        }
 .page-inner { max-width: 1100px; margin: 0 auto; padding: 0 16px 40px; }
 
         /* ── PC: 横スクロールテーブル ── */
-        .marks-outer { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 12px 0 20px; display: flex; justify-content: flex-start; }
+        .marks-outer { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 12px 0 20px; display: flex; justify-content: center; }
         .marks-table { display: flex; flex-direction: row-reverse; width: max-content; border: 2px solid #222; background: #fff; flex-shrink: 0; }
         .label-col { width: var(--label-width); display: flex; flex-direction: column; background: #f4f4f4; border-left: 2px solid #222; flex-shrink: 0; }
         .label-col .cell { font-size: .78em; font-weight: bold; color: #333; justify-content: center; text-align: center; background: #f4f4f4; }
@@ -336,7 +340,7 @@ function renderSPList() {
         const card = document.createElement('div');
         card.className = 'sp-mark-card';
         const opts = MARK_OPTIONS.map(o =>
-            `<option value="${o.value}" ${saved===o.value?'selected':''}>${o.value ? MARK_LABELS[o.value]+' '+o.value.replace('honmei','本命').replace('taikou','対抗').replace('tanana','単穴').replace('renka','連下').replace('osae','抑え') : 'なし'}</option>`
+            `<option value="${o.value}" ${saved===o.value?'selected':''}>${o.label}</option>`
         ).join('');
         card.innerHTML = `
             <div class="sp-frame-badge sp-frame-${team.id}">${team.id}</div>
